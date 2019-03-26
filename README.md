@@ -3,7 +3,7 @@ Multiplayer game
 
 Game is rendered by HTML5 Canvas methods only, without any additional images
 
-  - Player number is shown on the left laser cannon
+  - Two players per room, player number is shown on the left laser cannon
   - Collect asteroids of the same color as the ship's cargo platform color
   - Avoid or destroy asteroids of the colors not fitting to the ship's cargo platform color
   - Movement: mouse
