@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Online Multiplayer Game</title>
+    <style>
+      html, body {
+        width  : 95%;
+        height : 95%;
+      }
+      #header {
+        font-size : 18px;
+        text-align : center;
+      }
+      #container {
+        position : relative;
+        width    : 800px;
+        height   : 600px;
+      }
+      #staticCanvas, #dynamicCanvas {
+        position : absolute;
+        top      : 0px;
+        left     : 0px;
+        border   : 1px solid black;
+      }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <p id="header"> Game is rendered by HTML5 Canvas methods only, without any additional images </p>
+    <div id="container">
+      <canvas id="staticCanvas" width="800" height="600"> </canvas>
+      <canvas id="dynamicCanvas" width="800" height="600" onmousemove="mouseMoved(event);" onmousedown="mouseDown(event);" oncontextmenu="return false;"> Ваш браузер не поддерживает элемент HTML5 Canvas </canvas>
+    </div>
+    <p> - Player number is shown on the left laser cannon </p>
+    <p> - Collect asteroids of the same color as the ship's cargo platform color </p>
+    <p> - Avoid or destroy asteroids of the colors not fitting to the ship's cargo platform color </p>
+    <p> - Movement: mouse </p>
+    <p> - Left laser cannon shot: left mouse button </p>
+    <p> - Right laser cannon shot: right mouse button </p>
+    <p> - Collect three asteroids of the same color to increase your score </p>
+    <p> - score is shown in the center of a the ship's cargo platform </p>
+    <p> - Good luck! </p>
+  </body>
+  <script>
+    'use strict';
+    const socket = io();
+  </script>
+  <script src="/game-loop.js"></script>
+  <script src="/socket-emit.js"></script>
+  <script src="/socket-on.js"></script>
+  <script src="/game-user-input.js"></script>
+</html>

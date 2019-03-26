@@ -1,0 +1,11 @@
+function socketEmitMouseMoved(clientX) {
+  socket.emit("ship moved", clientX)
+};
+
+function socketEmitFireLeftWeapon() {
+  socket.emit("fire left weapon")
+};
+
+function socketEmitFireRightWeapon() {
+  socket.emit("fire right weapon")
+};
