@@ -8,6 +8,7 @@ const fs      = require('fs');
 const path    = require('path');
 const gid     = require('./game/game-init-data');
 const cd      = require('./game/collision-detection');
+const bps     = require('./game/binary-protocol-server');
 const ms      = require('./game/movements');
 const PORT    = process.env.PORT || 3000;
 
@@ -47,12 +48,9 @@ io.on('connection', function(socket) {
     rooms[roomName].ships[socket.gamePlayerNumber] = gid.getPlayerShip(rooms[roomName].gameData);
     rooms[roomName].ships[socket.gamePlayerNumber].playerNumber = socket.gamePlayerNumber;
 
-    // send init data to player
-    let initData = {
-      "data"  : rooms[roomName].gameData,
-      "ships" : rooms[roomName].ships
-    };
-    io.sockets.to(socket.id).emit('init-data', initData);
+    // send data
+    io.sockets.to(socket.id).emit('init-data', rooms[roomName].gameData);
+    io.to(roomName).emit("new-ship-in-room", rooms[roomName].ships);
 
     // if the room became full - remove it from notFullRoomsStack
     if (rooms[roomName].sockets.length >= playersPerRoomLimit) {
@@ -80,12 +78,9 @@ io.on('connection', function(socket) {
     // add new room to notFullRoomsStack
     notFullRoomsStack.unshift(roomName);
 
-    // send init data to player
-    let initData = {
-      "data"  : rooms[roomName].gameData,
-      "ships" : rooms[roomName].ships
-    };
-    io.sockets.to(socket.id).emit('init-data', initData);
+    // send data
+    io.sockets.to(socket.id).emit('init-data', rooms[roomName].gameData);
+    io.to(roomName).emit("new-ship-in-room", rooms[roomName].ships);
 
     // start game in room
     rooms[roomName].gameLoop = setTimeout(gameLoopNextIteration, gameLoopTimeOut, roomName);
@@ -117,7 +112,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('ship moved', function(clientX) {
-    ms.moveShip(rooms[socket.gameRoomName].ships[socket.gamePlayerNumber], clientX);
+    ms.moveShip(rooms[socket.gameRoomName].ships[socket.gamePlayerNumber], new Buffer(clientX).readInt16BE());
   });
 
   socket.on('fire left weapon', function() {
@@ -141,11 +136,7 @@ function gameLoopNextIteration(roomName) {
     ms.moveStarsAndAsteroids(room.gameData.asteroids3, room.gameData.asteroidsSpeed, room.gameData.canvasWidth, room.gameData.canvasHeight);
     cd.asteroidsPlayersShipsCollisionDetection(room);
 
-    let gameData = {
-      "data"  : room.gameData,
-      "ships" : room.ships
-    };
-    io.to(roomName).emit("dynamic-data", gameData);
+    io.to(roomName).emit("binary-data", bps.dynamicDataToBinary(room));
     room.gameLoop = setTimeout(gameLoopNextIteration, gameLoopTimeOut, roomName);
   };
 };

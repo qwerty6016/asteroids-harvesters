@@ -20,16 +20,18 @@ exports.getInitData = function() {
     "asteroids2"       : [],
     "numOfAsteroids3"  : 5,
     "asteroids3"       : [],
+    "arrayBufferSize"  : null,
     "projectileColor"  : "#60d60c",
+    "projectileSize"   : {"x" : 1,   "y" : 12},
     "projectiles"      : []
   };
 
   // fill arrays of stars
   for (let i = 0; i < data.numOfYellowStars; i++) {
-  	data.starsYellow.push({"x" : Math.floor(Math.random() * data.canvasWidth), "y" : Math.floor(Math.random() * data.canvasHeight)});
+    data.starsYellow.push({"x" : Math.floor(Math.random() * data.canvasWidth), "y" : Math.floor(Math.random() * data.canvasHeight)});
   };
   for (let i = 0; i < data.numOfWhiteStars; i++) {
-  	data.starsWhite.push({"x" : Math.floor(Math.random() * data.canvasWidth), "y" : Math.floor(Math.random() * data.canvasHeight)});
+    data.starsWhite.push({"x" : Math.floor(Math.random() * data.canvasWidth), "y" : Math.floor(Math.random() * data.canvasHeight)});
   };
 
   // fill arrays of asteroids
@@ -43,28 +45,35 @@ exports.getInitData = function() {
     data.asteroids3.push({"x" : Math.floor(Math.random() * data.canvasWidth), "y" : Math.floor(Math.random() * (data.canvasHeight * 0.5)), "color" : data.colors[2]});
   };
 
+  data.arrayBufferInitSize =
+    data.numOfYellowStars * 4
+    + data.numOfWhiteStars * 4
+    + data.numOfAsteroids1 * 4
+    + data.numOfAsteroids2 * 4
+    + data.numOfAsteroids3 * 4;
+
   return data;
 };
 
 exports.getPlayerShip = function(data) {
   let ship = {
-    "size"                  : {"x" : 125, "y" : 50},
-    "weaponSize"            : {"x" : 25,  "y" : 50},
-    "weaponXCenter"         : 12,
-    "weaponYCenter"         : 25,
-    "shipXCenter"           : 64,
-    "shipYCenter"           : 25,
-    "projectileSize"        : {"x" : 1,   "y" : 12},
-    "platformSize"          : {"x" : 75,  "y" : 25},
-    "platformCargoUnitSize" : {"x" : 25,  "y" : 25},
-    "platformCargoSpace"    : [false, false, false],
-    "playerNumber"          : null,
-    "score"                 : 0,
-    "platformColor"         : Math.floor(Math.random() * 3)
+    "size"                     : {"x" : 125, "y" : 50},
+    "weaponSize"               : {"x" : 25,  "y" : 50},
+    "weaponXCenter"            : 12,
+    "weaponYCenter"            : 25,
+    "shipXCenter"              : 64,
+    "shipYCenter"              : 25,
+    "platformSize"             : {"x" : 75,  "y" : 25},
+    "platformCargoUnitSize"    : {"x" : 25,  "y" : 25},
+    "platformCargoSpace"       : 3,
+    "platformCargoFilledSpace" : 0,
+    "playerNumber"             : null,
+    "score"                    : 0,
+    "disconnected"             : false,
+    "platformColorNum"         : Math.floor(Math.random() * 3)
   };
 
   ship.currentPosition = {"x" : Math.floor(data.canvasWidth * 0.5 - ship.size.x * 0.5), "y" : data.canvasHeight - ship.size.y};
-  ship.platformColor   = data.colors[ship.platformColor];
 
   return ship;
 };

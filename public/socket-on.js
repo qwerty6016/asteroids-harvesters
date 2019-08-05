@@ -3,18 +3,21 @@ socket.on('rooms', function(msg) {
 });
 
 socket.on('player-disconnected', function(msg) {
-  console.log(msg);
+  ships[msg].disconnected = true;
+  console.log("player " + msg + " disconnected");
 });
 
-socket.on('dynamic-data', function(msg) {
-  data = msg.data;
-  ships = msg.ships;
+socket.on('binary-data', function(msg) {
+  decodeBinary(msg);
 });
 
 socket.on('init-data', function(msg) {
-  data = msg.data;
-  ships = msg.ships;
+  data = msg;
 
   // start game
   animFrame();
+});
+
+socket.on('new-ship-in-room', function(msg) {
+  ships = msg;
 });

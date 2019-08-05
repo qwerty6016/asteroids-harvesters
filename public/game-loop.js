@@ -7,8 +7,8 @@ const dynCtx     = dynCanvas.getContext("2d");
 const dynWidth   = dynCanvas.width;
 const dynHeight  = dynCanvas.height;
 
-let data = null;
-let ships    = null;
+let data  = null;
+let ships = null;
 
 // display alert if size of staticCanvas not equal to size of dynamicCanvas
 if (statWidth != dynWidth || statHeight != dynHeight) alert("Different width/height of canvases!    statWidth = " + statWidth + ", dynWidth = " + dynWidth + ";    statHeight = " + statHeight + ", dynHeight = " + dynHeight);
@@ -29,9 +29,14 @@ function gameLoop() {
   drawStarsAndAsteroids(data.asteroids1, data.asteroids1[0].color, data.asteroidsSize);
   drawStarsAndAsteroids(data.asteroids2, data.asteroids2[0].color, data.asteroidsSize);
   drawStarsAndAsteroids(data.asteroids3, data.asteroids3[0].color, data.asteroidsSize);
+  drawProjectiles();
+
   for (let k in ships) {
-    drawProjectiles(ships[k]);
-    drawPlayerShip(ships[k]);
+    if (!ships[k].disconnected) {
+      drawPlayerShip(ships[k]);
+    } else {
+      delete ships[k];
+    }
   };
 };
 
@@ -48,7 +53,7 @@ function drawPlayerShip(playerShip) {
   dynCtx.fillStyle = "#a8a8a8";
   dynCtx.fillRect(playerShip.currentPosition.x, playerShip.currentPosition.y, playerShip.weaponSize.x, playerShip.weaponSize.y);
   dynCtx.fillRect(playerShip.currentPosition.x + playerShip.size.x - playerShip.weaponSize.x, playerShip.currentPosition.y, playerShip.weaponSize.x, playerShip.weaponSize.y);
-  dynCtx.fillStyle = playerShip.platformColor;
+  dynCtx.fillStyle = data.colors[playerShip.platformColorNum];
   dynCtx.fillRect(playerShip.currentPosition.x + playerShip.weaponSize.x, playerShip.currentPosition.y + playerShip.platformSize.y, playerShip.platformSize.x, playerShip.platformSize.y);
   dynCtx.font = "15px Comic Sans MS";
   dynCtx.textAlign = "center";
@@ -56,19 +61,15 @@ function drawPlayerShip(playerShip) {
   dynCtx.fillText(playerShip.playerNumber, playerShip.currentPosition.x + playerShip.weaponXCenter, playerShip.currentPosition.y + playerShip.weaponYCenter);
   dynCtx.fillStyle = "white";
   dynCtx.fillText(playerShip.score, playerShip.currentPosition.x + playerShip.shipXCenter, playerShip.currentPosition.y + playerShip.size.y - 10);
-  dynCtx.fillStyle = playerShip.platformColor;
-  for(let i = 0; i < playerShip.platformCargoSpace.length; i++) {
-    if (playerShip.platformCargoSpace[i]) {
-      dynCtx.fillRect(playerShip.currentPosition.x + playerShip.weaponSize.x + playerShip.platformCargoUnitSize.x * i, playerShip.currentPosition.y, playerShip.platformCargoUnitSize.x, playerShip.platformCargoUnitSize.y);
-    } else {
-      break;
-    };
+  dynCtx.fillStyle = data.colors[playerShip.platformColorNum];
+  for(let i = 0; i < playerShip.platformCargoFilledSpace; i++) {
+    dynCtx.fillRect(playerShip.currentPosition.x + playerShip.weaponSize.x + playerShip.platformCargoUnitSize.x * i, playerShip.currentPosition.y, playerShip.platformCargoUnitSize.x, playerShip.platformCargoUnitSize.y);
   };
 };
 
-function drawProjectiles(playerShip) {
+function drawProjectiles() {
   dynCtx.fillStyle = data.projectileColor;
   for(let i = 0; i < data.projectiles.length; i++) {
-    dynCtx.fillRect(data.projectiles[i].x, data.projectiles[i].y, playerShip.projectileSize.x, playerShip.projectileSize.y);
+    dynCtx.fillRect(data.projectiles[i].x, data.projectiles[i].y, data.projectileSize.x, data.projectileSize.y);
   };
 };
